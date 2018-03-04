@@ -96,6 +96,7 @@ class Chain():
             idle = True
             for _, clock_read in self.product_queue.items():
                 if clock_read[0] > 0:
+                    idle = False
                     print('False')
             if idle:
                 self.order(day)

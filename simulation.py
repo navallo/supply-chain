@@ -57,11 +57,9 @@ class Chain():
                         clock_read[1] = 7
                     self.on_ship_num += self.batch_size
                     self.in_produce_num -= self.batch_size
-                    for day, clock_read in self.product_queue.items():
-                        if clock_read[0] > 0:
-                            clock_read[0] -= 1
-                            break
-                break
+                    continue
+                else:
+                    break
 
         for key in delete_list:
             del self.product_queue[key]
@@ -95,7 +93,12 @@ class Chain():
             self.inventory_num -= demand
 
         if (self.inventory_num + self.on_ship_num) <= self.order_point:
-            self.order(day)
+            idle = True
+            for _, clock_read in self.product_queue.items():
+                if clock_read[0] > 0:
+                    print('False')
+            if idle:
+                self.order(day)
 
         self.cost_holding()
         self.gain_daily_interest()
@@ -118,7 +121,7 @@ def main(babble_level, capacity, batch_size, ship, order_point):
     print('capacity=', capacity, '\nbatch_size=', batch_size, '\nship=', ship,
           '\norder_point=', order_point)
     print('\n')
-    with open('./data/data.txt', 'r') as data:
+    with open('./data/data_all.txt', 'r') as data:
         for demand in data:
             count_day += 1
             demand = int(demand)
@@ -136,7 +139,7 @@ if __name__ == '__main__':
     BATCH_SIZE = 200
     SHIP = 'truck'
     #SHIP = 'mail'
-    ORDER_POINT = 10000
+    ORDER_POINT = 1000
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-b', help='babble level')

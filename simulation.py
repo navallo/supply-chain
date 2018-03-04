@@ -6,7 +6,7 @@ class Chain():
     def __init__(self, capacity, batch_size, ship, order_point):
         self.in_produce_num = 0
         self.on_ship_num = 0
-        self.inventory_num = 200
+        self.inventory_num = 1000
         self.cash = 10000000
         self.capacity = capacity
         self.batch_size = batch_size
@@ -45,6 +45,8 @@ class Chain():
                     self.inventory_num += self.batch_size
                     self.on_ship_num -= self.batch_size
                     delete_list.append(day)
+
+        for day, clock_read in self.product_queue.items():
             if clock_read[0] > 0:
                 clock_read[0] -= 1
                 if clock_read[0] == 0:
@@ -55,6 +57,12 @@ class Chain():
                         clock_read[1] = 7
                     self.on_ship_num += self.batch_size
                     self.in_produce_num -= self.batch_size
+                    for day, clock_read in self.product_queue.items():
+                        if clock_read[0] > 0:
+                            clock_read[0] -= 1
+                            break
+                break
+
         for key in delete_list:
             del self.product_queue[key]
 
@@ -86,8 +94,7 @@ class Chain():
             self.gain_to_customer(demand)
             self.inventory_num -= demand
 
-        if (self.inventory_num + self.on_ship_num +
-                self.in_produce_num) <= self.order_point:
+        if (self.inventory_num + self.on_ship_num) <= self.order_point:
             self.order(day)
 
         self.cost_holding()
@@ -129,7 +136,7 @@ if __name__ == '__main__':
     BATCH_SIZE = 200
     SHIP = 'truck'
     #SHIP = 'mail'
-    ORDER_POINT = 1000
+    ORDER_POINT = 10000
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-b', help='babble level')
